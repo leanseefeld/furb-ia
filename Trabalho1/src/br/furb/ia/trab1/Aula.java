@@ -19,6 +19,11 @@ public class Aula {
 		this.dia = dia;
 	}
 
+	/**
+	 * 1 para primeiro horario
+	 * 2 para o segundo horario
+	 * @return
+	 */
 	public int getHorario() {
 		return horario;
 	}
