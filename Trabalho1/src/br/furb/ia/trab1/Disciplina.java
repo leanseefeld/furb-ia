@@ -8,16 +8,13 @@ public class Disciplina {
 	private Disciplina preRequisito;
 	private String nome;
 	private int semestre;
-	private List<Aula> aulas;
+	private final List<Aula> aulas;
 
 	public Disciplina(String nome, int semestre) {
-		super();
-		this.nome = nome;
-		this.semestre = semestre;
+		this(null, nome, semestre, new ArrayList<Aula>(2));
 	}
 
 	public Disciplina(Disciplina preRequisito, String nome, int semestre, List<Aula> aulas) {
-		super();
 		this.preRequisito = preRequisito;
 		this.nome = nome;
 		this.semestre = semestre;
@@ -26,7 +23,6 @@ public class Disciplina {
 
 	public void addAula(Dia dia, int periodo) {
 		aulas.add(new Aula(dia, periodo));
-		aulas = new ArrayList<>(2);
 	}
 
 	public Disciplina getPreRequisito() {
@@ -58,7 +54,8 @@ public class Disciplina {
 	}
 
 	public void setAulas(List<Aula> aulas) {
-		this.aulas = aulas;
+		this.aulas.clear();
+		this.aulas.addAll(aulas);
 	}
 
 }

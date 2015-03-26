@@ -10,19 +10,19 @@ import busca.BuscaIterativo;
 import busca.Estado;
 import busca.MostraStatusConsole;
 
-public class Busca implements Estado {
+public class HorarioBuscaIterativa implements Estado {
 
 	private Disciplina[][] horarios = new Disciplina[Dia.values().length][2];
 	// Trocar pra um HashSet quando tiver funcionando pra ver se melhora a performance e comentar no relatório
 	private List<Disciplina> disciplinasDisponiveis = new ArrayList<Disciplina>();
 
-	public Busca(List<Disciplina> disciplinasDisponiveis) {
+	public HorarioBuscaIterativa(List<Disciplina> disciplinasDisponiveis) {
 		this.disciplinasDisponiveis = new ArrayList<>(disciplinasDisponiveis);
 	}
 
 	@Override
-	public Busca clone() {
-		Busca novaBusca = new Busca(disciplinasDisponiveis);
+	public HorarioBuscaIterativa clone() {
+		HorarioBuscaIterativa novaBusca = new HorarioBuscaIterativa(disciplinasDisponiveis);
 		for (int i = 0; i < horarios.length; i++) {
 			for (int j = 0; j < horarios.length; j++) {
 				novaBusca.horarios[i][j] = this.horarios[i][j];
@@ -92,7 +92,7 @@ public class Busca implements Estado {
 						 * esse novo estado
 						 */
 						if (disciplinaEncontrada != null) {
-							Busca novaBusca = this.clone();
+							HorarioBuscaIterativa novaBusca = this.clone();
 							novaBusca.horarios[posicoes[0][0]][posicoes[0][1]] = disciplinaEncontrada;
 							novaBusca.horarios[posicoes[1][0]][posicoes[1][1]] = disciplinaEncontrada;
 							novaBusca.disciplinasDisponiveis.remove(disciplinaEncontrada);
@@ -118,8 +118,4 @@ public class Busca implements Estado {
 		return contador;
 	}
 
-	public static void main(String[] args) {
-		BuscaIterativo busca = new BuscaIterativo(new MostraStatusConsole());
-		busca.busca(new Busca(new ArrayList<Disciplina>()));
-	}
 }
