@@ -24,7 +24,7 @@ public class HorarioBuscaIterativa implements Estado {
 	public HorarioBuscaIterativa clone() {
 		HorarioBuscaIterativa novaBusca = new HorarioBuscaIterativa(disciplinasDisponiveis);
 		for (int i = 0; i < horarios.length; i++) {
-			for (int j = 0; j < horarios.length; j++) {
+			for (int j = 0; j < horarios[i].length; j++) {
 				novaBusca.horarios[i][j] = this.horarios[i][j];
 			}
 		}
