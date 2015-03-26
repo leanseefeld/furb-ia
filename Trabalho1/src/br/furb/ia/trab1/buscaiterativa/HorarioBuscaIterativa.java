@@ -1,14 +1,13 @@
 package br.furb.ia.trab1.buscaiterativa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import br.furb.ia.trab1.Aula;
 import br.furb.ia.trab1.Dia;
 import br.furb.ia.trab1.Disciplina;
-import busca.BuscaIterativo;
 import busca.Estado;
-import busca.MostraStatusConsole;
 
 public class HorarioBuscaIterativa implements Estado {
 
@@ -50,11 +49,11 @@ public class HorarioBuscaIterativa implements Estado {
 		 */
 		List<Estado> proximosEstados = new ArrayList<Estado>();
 
-		for (int i = 0; i < horarios.length; i++) {
-			for (int j = 0; j < horarios[i].length; j++) {
-				if (horarios[i][j] == null) {
+		lacoDias: for (int iDia = 0; iDia < horarios.length; iDia++) {
+			for (int iPeriodo = 0; iPeriodo < horarios[iDia].length; iPeriodo++) {
+				if (horarios[iDia][iPeriodo] == null) {
 
-					Dia dia = Dia.values()[i];
+					Dia dia = Dia.values()[iDia];
 					Disciplina disciplinaEncontrada = null;
 					int[][] posicoes = new int[2][2];
 					for (Disciplina disc : disciplinasDisponiveis) {
@@ -63,10 +62,10 @@ public class HorarioBuscaIterativa implements Estado {
 						Aula aulaEncontrada = null;
 						for (Aula aula : disc.getAulas()) {
 							if (aula.getDia() == dia) {
-								if (aula.getHorario() == j + 1) {
+								if (aula.getHorario() == iPeriodo + 1) {
 									aulaEncontrada = aula;
 
-									posicoes[0] = new int[] { i, j };
+									posicoes[0] = new int[] { iDia, iPeriodo };
 									break;
 								}
 							}
@@ -77,7 +76,7 @@ public class HorarioBuscaIterativa implements Estado {
 							for (Aula aula : disc.getAulas()) {
 								if (aula != aulaEncontrada) {
 									int auxDia = aula.getDia().ordinal();
-									int auxHorario = aula.getHorario() + 1;
+									int auxHorario = aula.getHorario() - 1;
 									if (horarios[auxDia][auxHorario] == null) {
 										disciplinaEncontrada = disc;
 										posicoes[1] = new int[] { auxDia, auxHorario };
@@ -99,7 +98,7 @@ public class HorarioBuscaIterativa implements Estado {
 							proximosEstados.add(novaBusca);
 						}
 					}
-					return proximosEstados;
+					break lacoDias;
 				}
 			}
 		}
@@ -118,4 +117,54 @@ public class HorarioBuscaIterativa implements Estado {
 		return contador;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((disciplinasDisponiveis == null) ? 0 : disciplinasDisponiveis.hashCode());
+		result = prime * result + Arrays.hashCode(horarios);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HorarioBuscaIterativa other = (HorarioBuscaIterativa) obj;
+		if (disciplinasDisponiveis == null) {
+			if (other.disciplinasDisponiveis != null)
+				return false;
+		} else if (disciplinasDisponiveis.size() != other.disciplinasDisponiveis.size() || !disciplinasDisponiveis.containsAll(other.disciplinasDisponiveis))
+			return false;
+		if (!Arrays.deepEquals(horarios, other.horarios))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder saida = new StringBuilder();
+		saida.append("SEGUNDA    TERÇA      QUARTA     QUINTA     SEXTA     \n");
+		for (int i = 0; i < horarios[0].length; i++) {
+			for (int j = 0; j < horarios.length; j++) {
+				saida.append(formataString(horarios[j][i], 10));
+			}
+			saida.append('\n');
+		}
+		return saida.toString();
+	}
+
+	public String formataString(Disciplina d, int tamanhoMaximo) {
+		String nome = d == null ? " -" : d.getNome();
+		if (nome.length() > tamanhoMaximo) {
+			return nome.substring(0, tamanhoMaximo);
+		}
+		char[] emptyChars = new char[tamanhoMaximo - nome.length()];
+		Arrays.fill(emptyChars, ' ');
+		return nome.concat(new String(emptyChars));
+	}
 }

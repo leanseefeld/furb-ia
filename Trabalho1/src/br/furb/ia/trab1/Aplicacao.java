@@ -7,6 +7,7 @@ import java.util.List;
 import br.furb.ia.trab1.buscaiterativa.HorarioBuscaIterativa;
 import busca.BuscaIterativo;
 import busca.MostraStatusConsole;
+import busca.Nodo;
 
 public class Aplicacao {
 
@@ -58,9 +59,23 @@ public class Aplicacao {
 	public static void main(String[] args) {
 		List<Disciplina> disciplinasDisponiveis = new ArrayList<>(DISCIPLINAS_OFERTADAS);
 		disciplinasDisponiveis.removeAll(DISCIPLINAS_CURSADAS);
-		
+
 		BuscaIterativo busca = new BuscaIterativo(new MostraStatusConsole());
-		busca.busca(new HorarioBuscaIterativa(disciplinasDisponiveis));
+		Nodo meta = busca.busca(new HorarioBuscaIterativa(disciplinasDisponiveis));
+		if (meta == null) {
+			System.out.println("Problema sem solução");
+		} else {
+			StringBuilder builder = new StringBuilder();
+			printCaminho(meta, builder);
+			System.out.println(builder);
+		}
+	}
+
+	private static void printCaminho(Nodo meta, StringBuilder builder) {
+		if (meta != null) {
+			printCaminho(meta.getPai(), builder);
+			builder.append(meta.getEstado().toString()).append(" -----\n");
+		}
 	}
 
 }
