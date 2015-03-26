@@ -1,7 +1,6 @@
 package br.furb.ia.trab1.buscaiterativa;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import br.furb.ia.trab1.Aula;
@@ -13,31 +12,11 @@ import busca.MostraStatusConsole;
 
 public class Busca implements Estado {
 
-	Disciplina[][] horarios = new Disciplina[5][2];
-	ArrayList<Disciplina> disciplinasDisponiveis = new ArrayList<Disciplina>();
+	private Disciplina[][] horarios = new Disciplina[Dia.values().length][2];
+	// Trocar pra um HashSet quando tiver funcionando pra ver se melhora a performance e comentar no relatório
+	private List<Disciplina> disciplinasDisponiveis = new ArrayList<Disciplina>();
 
-	private Dia getDia(int index) {
-		Dia dia = null;
-		switch (index) {
-		case 0:
-			dia = Dia.SEG;
-		case 1:
-			dia = Dia.TER;
-		case 2:
-			dia = Dia.QUA;
-		case 3:
-			dia = Dia.QUI;
-		case 4:
-			dia = Dia.SEX;
-		}
-		return dia;
-	}
-
-	private int getIndex(Dia dia) {
-		return dia.GetValue();
-	}
-
-	public Busca(ArrayList<Disciplina> disciplinasDisponiveis) {
+	public Busca(List<Disciplina> disciplinasDisponiveis) {
 		this.disciplinasDisponiveis = new ArrayList<>(disciplinasDisponiveis);
 	}
 
@@ -75,7 +54,7 @@ public class Busca implements Estado {
 			for (int j = 0; j < horarios[i].length; j++) {
 				if (horarios[i][j] == null) {
 
-					Dia dia = getDia(i);
+					Dia dia = Dia.values()[i];
 					Disciplina disciplinaEncontrada = null;
 					int[][] posicoes = new int[2][2];
 					for (Disciplina disc : disciplinasDisponiveis) {
@@ -87,7 +66,7 @@ public class Busca implements Estado {
 								if (aula.getHorario() == j + 1) {
 									aulaEncontrada = aula;
 
-									posicoes[1] = new int[] { i, j };
+									posicoes[0] = new int[] { i, j };
 									break;
 								}
 							}
@@ -97,12 +76,11 @@ public class Busca implements Estado {
 						if (aulaEncontrada != null) {
 							for (Aula aula : disc.getAulas()) {
 								if (aula != aulaEncontrada) {
-									int auxDia = getIndex(aula.getDia());
+									int auxDia = aula.getDia().ordinal();
 									int auxHorario = aula.getHorario() + 1;
 									if (horarios[auxDia][auxHorario] == null) {
 										disciplinaEncontrada = disc;
-										posicoes[2] = new int[] { auxDia,
-												auxHorario };
+										posicoes[1] = new int[] { auxDia, auxHorario };
 										break;
 									}
 								}
@@ -115,10 +93,9 @@ public class Busca implements Estado {
 						 */
 						if (disciplinaEncontrada != null) {
 							Busca novaBusca = this.clone();
-							novaBusca.horarios[posicoes[1][1]][posicoes[1][2]] = disciplinaEncontrada;
-							novaBusca.horarios[posicoes[2][1]][posicoes[2][2]] = disciplinaEncontrada;
-							novaBusca.disciplinasDisponiveis
-									.remove(disciplinaEncontrada);
+							novaBusca.horarios[posicoes[0][0]][posicoes[0][1]] = disciplinaEncontrada;
+							novaBusca.horarios[posicoes[1][0]][posicoes[1][1]] = disciplinaEncontrada;
+							novaBusca.disciplinasDisponiveis.remove(disciplinaEncontrada);
 							proximosEstados.add(novaBusca);
 						}
 					}
@@ -133,8 +110,9 @@ public class Busca implements Estado {
 		int contador = 0;
 		for (int i = 0; i < horarios.length; i++) {
 			for (int j = 0; j < horarios[i].length; j++) {
-				if (horarios[i][j] == null)
+				if (horarios[i][j] == null) {
 					contador++;
+				}
 			}
 		}
 		return contador;
