@@ -1,0 +1,24 @@
+:grade
+1
+C A B E B
+D C D A E
+2
+J H I H G
+G F J I F
+3
+K N L O O
+L M M N K
+
+:dependencia
+L->H->B
+I->A
+
+:cursadas
+B D E G H
+
+:onde
+A = Programação 1
+B = Robótica
+D = Computação Digital
+J = Arquitetura de Computadores
+
