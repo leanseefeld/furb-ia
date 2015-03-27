@@ -102,9 +102,16 @@ public class Aplicacao {
 				printCaminho(meta, builder);
 				System.out.println(builder);
 			}
-
-			System.out.print("Fim da busca " + (tipoBusca == "L" ? "em Largura" : (tipoBusca == "I" ? "com Aprofundamento Iterativo": " em Profundidade")));
-
+			
+			//System.out.print("Fim da busca " + (tipoBusca == "L" ? "em Largura" : (tipoBusca == "I" ? "com Aprofundamento Iterativo": " em Profundidade")));
+			if(tipoBusca.equalsIgnoreCase("L")){
+				System.out.println("Fim da Busca em Largura");
+			}else if(tipoBusca.equalsIgnoreCase("I")){
+				System.out.println("Fim da Busca com Aprofundamento Iterativo");
+			}else if(tipoBusca.equalsIgnoreCase("P")){
+				System.out.println("Fim da Busca em Profundidade");
+			}
+			
 		} catch (Exception ex) {
 			System.out.println("Erro\r\n" + ex.getMessage());
 		}
