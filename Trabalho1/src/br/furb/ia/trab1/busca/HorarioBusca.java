@@ -78,18 +78,18 @@ public class HorarioBusca implements Estado {
 									}
 								}
 							}
-						}
-						/*
-						 * Se encontrou uma disciplina que pode encaixar todas
-						 * suas aulas então cria um clone desse estado e altera
-						 * esse novo estado
-						 */
-						if (disciplinaEncontrada != null) {
-							HorarioBusca novaBusca = this.clone();
-							novaBusca.horarios[posicoes[0][0]][posicoes[0][1]] = disciplinaEncontrada;
-							novaBusca.horarios[posicoes[1][0]][posicoes[1][1]] = disciplinaEncontrada;
-							novaBusca.disciplinasDisponiveis.remove(disciplinaEncontrada);
-							proximosEstados.add(novaBusca);
+							/*
+							 * Se encontrou uma disciplina que pode encaixar todas
+							 * suas aulas então cria um clone desse estado e altera
+							 * esse novo estado
+							 */
+							if (disciplinaEncontrada != null) {
+								HorarioBusca novaBusca = this.clone();
+								novaBusca.horarios[posicoes[0][0]][posicoes[0][1]] = disciplinaEncontrada;
+								novaBusca.horarios[posicoes[1][0]][posicoes[1][1]] = disciplinaEncontrada;
+								novaBusca.disciplinasDisponiveis.remove(disciplinaEncontrada);
+								proximosEstados.add(novaBusca);
+							}
 						}
 					}
 					break lacoDias;
