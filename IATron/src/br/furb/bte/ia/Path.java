@@ -1,22 +1,21 @@
-using System;
+package br.furb.bte.ia;
 
-sealed class Path
-{
-	public string direction;
-    /// <summary>
-    /// Distancia do destino
-    /// </summary>
-	public int length;
-	public float cost;
+class Path {
 
-	public Path(string direction, int length) : this(direction, length, 0)
-	{
-	}
+    public String direction;
+    /**
+     * Distancia do destino
+     */
+    public int length;
+    public float cost;
 
-	public Path(string direction, int length, float cost)
-    {
-		this.direction = direction;
-		this.length = length;
-		this.cost = cost;
-	}
+    public Path(String direction, int length) {
+	this(direction, length, 0);
+    }
+
+    public Path(String direction, int length, float cost) {
+	this.direction = direction;
+	this.length = length;
+	this.cost = cost;
+    }
 }
