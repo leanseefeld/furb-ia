@@ -652,7 +652,7 @@ class MyTronBot {
 		    //                    TimeSpan ts = DateTime.Now - lastAlphaBeta;
 		    //                    time = (float)ts.Milliseconds * (depth * timebase);
 		    Instant instF = Instant.now();
-		    long duration = java.time.Duration.between(instI, instF).toNanos();
+		    long duration = java.time.Duration.between(instI, instF).toMillis();
 		    time = duration * (depth * timebase);
 		} else {
 		    score = Integer.MIN_VALUE;
@@ -768,7 +768,7 @@ class MyTronBot {
     }
 
     private static long Duration() {
-	long tempo = java.time.Duration.between(lastTime, Instant.now()).toNanos();
+	long tempo = java.time.Duration.between(lastTime, Instant.now()).toMillis();
 	return tempo;
 	//	TimeSpan ts = DateTime.Now - lastTime;
 	//	return ts.Milliseconds;
@@ -776,13 +776,11 @@ class MyTronBot {
 
     public static void Main() {
 	while (true) {
-	    //TODO: Implementar o Initialize()
 	    Map.Initialize();
 	    lastTime = Instant.now();
 	    //	    lastTime = DateTime.Now;
 	    Map.MakeMove(MakeMove());
-	    System.out.println("Duração do loop" + Duration());
-	    //	    Console.Error.WriteLine(Duration());
+	    System.out.println("Duração do loop: " + Duration() + " ms");
 	}
     }
 }
