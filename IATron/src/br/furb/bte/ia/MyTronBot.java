@@ -92,7 +92,6 @@ public class MyTronBot {
 
     private static float AlphaBeta(GameState gs, int depth, float alpha, float beta, boolean isMax) {
 	if (depth == 0 || gs.IsEndGame()) {
-	    System.out.println("depth:" + depth + " position: X " + gs.MyX() + " Y " + gs.MyY());
 	    float val = EvaluateMove(gs);
 	    return isMax ? val : -val;
 	}
@@ -753,8 +752,6 @@ public class MyTronBot {
 	//	int height = Map.Height();
 	Path path = PerformChaseMove();
 
-	Map.wallsToString();
-	
 	// means our enemy is attainable
 	if (path != null) {
 	    move = path.direction;

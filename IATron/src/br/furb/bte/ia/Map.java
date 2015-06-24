@@ -162,7 +162,6 @@ class Map {
 		}
 	    }
 	}
-	System.out.println(Map.wallsToString());
     }
 
     // Reads the map from standard input (from the console).

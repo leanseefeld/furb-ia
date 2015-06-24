@@ -1,6 +1,7 @@
 package br.furb.bte.ia;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class GameState {
@@ -20,8 +21,8 @@ class GameState {
 	//Gustavo Sabel - 24/06/2015 - A variável map de GameState estava com a mesma referencia do Map.
 	//Do jeito que estava, acabava "sujando" a variável walls de Map
 	//	this(Map.GetWall(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(Map.OpponentX(),
-	this(Map.GetWall().clone(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(
-		Map.OpponentX(), Map.OpponentY()));
+	this(copiarArray(Map.GetWall()), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()),
+		new Point(Map.OpponentX(), Map.OpponentY()));
     }
 
     public GameState(GameState gs) {
@@ -148,14 +149,14 @@ class GameState {
     }
 
     public GameState ApplyMoveToMeAndCreate(String direction) {
-	GameState gs = new GameState((boolean[][]) map.clone(), width, height, new Point(myLocation.X, myLocation.Y),
+	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y),
 		new Point(opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToMe(direction);
 	return gs;
     }
 
     public GameState ApplyMoveToOpponentAndCreate(String direction) {
-	GameState gs = new GameState((boolean[][]) map.clone(), width, height, new Point(myLocation.X, myLocation.Y),
+	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y),
 		new Point(opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToOpponent(direction);
 	return gs;
@@ -177,5 +178,13 @@ class GameState {
 	    }
 	}
 	return pontos;
+    }
+
+    public static boolean[][] copiarArray(boolean[][] orignal) {
+	boolean[][] copia = new boolean[orignal.length][orignal[0].length];
+	for (int i = 0; i < orignal.length; i++) {
+	    copia[i] = Arrays.copyOf(orignal[i], orignal[i].length);
+	}
+	return copia;
     }
 }
