@@ -17,8 +17,11 @@ class GameState {
     private float score;
 
     public GameState() {
-	this(Map.GetWall(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(Map.OpponentX(),
-		Map.OpponentY()));
+	//Gustavo Sabel - 24/06/2015 - A variável map de GameState estava com a mesma referencia do Map.
+	//Do jeito que estava, acabava "sujando" a variável walls de Map
+	//	this(Map.GetWall(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(Map.OpponentX(),
+	this(Map.GetWall().clone(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(
+		Map.OpponentX(), Map.OpponentY()));
     }
 
     public GameState(GameState gs) {

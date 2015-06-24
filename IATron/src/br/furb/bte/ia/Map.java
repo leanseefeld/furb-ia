@@ -124,6 +124,47 @@ class Map {
 	}
     }
 
+    /**
+     * Inicializa o mapa usando uma matriz de inteiros
+     * 
+     * @param mapa
+     *            Representação das informações: <br>
+     *            -1 = Obstáculo <br>
+     *            1 = moto do player <br>
+     *            2 = moto IA
+     */
+    public static void Initialize(int[][] mapa) {
+
+	final int OBSTACULO = -1;
+	final int MOTO_PLAYER = 1;
+	final int MOTO_IA = 2;
+
+	width = mapa.length;
+	height = mapa[0].length;
+
+	walls = new boolean[width][height];
+	for (int x = 0; x < mapa.length; x++) {
+	    for (int y = 0; y < mapa[0].length; y++) {
+		switch (mapa[x][y]) {
+		    case OBSTACULO:
+			walls[x][y] = true;
+			break;
+		    case MOTO_IA:
+			walls[x][y] = true;
+			myLocation = new Point(x, y);
+			break;
+		    case MOTO_PLAYER:
+			walls[x][y] = true;
+			opponentLocation = new Point(x, y);
+			break;
+		    default:
+			walls[x][y] = false;
+		}
+	    }
+	}
+	System.out.println(Map.wallsToString());
+    }
+
     // Reads the map from standard input (from the console).
     public static void Initialize() {
 	InputStreamReader readr = new InputStreamReader(System.in);
@@ -152,9 +193,9 @@ class Map {
 	    System.exit(1);
 	}
 	try {
-	    
+
 	    width = Integer.valueOf(tokens[0]);
-	    height =  Integer.valueOf(tokens[1]);
+	    height = Integer.valueOf(tokens[1]);
 	} catch (Exception e) {
 	    System.out.println("FATAL ERROR: invalid map dimensions: " + firstLine);
 	    System.exit(1);
@@ -208,7 +249,7 @@ class Map {
 			System.out.println("FATAL ERROR: found two locations for player "
 				+ "2 in the map! First location is (" + opponentLocation.X + "," + opponentLocation.Y
 				+ "), second location " + "is (" + x + "," + y + ").");
-				System.exit(1);
+			System.exit(1);
 		    }
 		    walls[x][y] = true;
 		    opponentLocation = new Point(x, y);
@@ -223,8 +264,8 @@ class Map {
 	    ++numSpacesRead;
 	}
 	if (numSpacesRead != width * height) {
-	    System.out.println("FATAL ERROR: wrong number of spaces in the map. " + "Should be "
-		    + (width * height) + ", but only found " + numSpacesRead + " spaces before end of stream.");
+	    System.out.println("FATAL ERROR: wrong number of spaces in the map. " + "Should be " + (width * height)
+		    + ", but only found " + numSpacesRead + " spaces before end of stream.");
 	    System.exit(1);
 	}
 	if (!foundMyLocation) {
@@ -245,4 +286,20 @@ class Map {
     private static void MakeMove(int direction) {
 	System.out.println(direction);
     }
+    
+    public static String wallsToString() {
+	StringBuilder str = new StringBuilder();
+	str.append("Walls: \r\n");
+	for (int x = 0; x < walls.length; x++) {
+	    for (int y = 0; y < walls[x].length; y++) {
+		if (walls[x][y])
+		    str.append('#');
+		else
+		    str.append(' ');
+	    }
+	    str.append(" X:" +x + "\r\n");
+	}
+	return str.toString();
+    }
+
 }

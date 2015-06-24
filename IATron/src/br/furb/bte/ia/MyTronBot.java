@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
-class MyTronBot {
+public class MyTronBot {
 
     private static final int TIME_LIMIT = 1000;
     private static final int TIME_THRESHOLD = 150;
@@ -92,6 +92,7 @@ class MyTronBot {
 
     private static float AlphaBeta(GameState gs, int depth, float alpha, float beta, boolean isMax) {
 	if (depth == 0 || gs.IsEndGame()) {
+	    System.out.println("depth:" + depth + " position: X " + gs.MyX() + " Y " + gs.MyY());
 	    float val = EvaluateMove(gs);
 	    return isMax ? val : -val;
 	}
@@ -746,12 +747,14 @@ class MyTronBot {
 	return bestMove;
     }
 
-    public static String MakeMove() {
+    private static String MakeMove() {
 	String move = null;
 	//	int width = Map.Width();
 	//	int height = Map.Height();
 	Path path = PerformChaseMove();
 
+	Map.wallsToString();
+	
 	// means our enemy is attainable
 	if (path != null) {
 	    move = path.direction;
@@ -772,6 +775,14 @@ class MyTronBot {
 	return tempo;
 	//	TimeSpan ts = DateTime.Now - lastTime;
 	//	return ts.Milliseconds;
+    }
+
+    public static String processMove(int[][] mapa) {
+	Map.Initialize(mapa);
+	lastTime = Instant.now();
+	String move = MakeMove();
+	System.out.println("Duração do loop: " + Duration() + " ms");
+	return move;
     }
 
     public static void Main() {
