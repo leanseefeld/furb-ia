@@ -39,7 +39,8 @@ class Territory {
 
 	while (!q.isEmpty()) {
 	    Point node = q.poll();
-	    if (node.X < 0 || node.Y < 0 || node.X >= gs.Width() || node.Y >= gs.Height())
+	    //	    if (node.X < 0 || node.Y < 0 || node.X >= gs.Width() || node.Y >= gs.Height())
+	    if (!Map.temIndiceValido(node))
 		continue;
 	    // exclude first nodes from this check
 	    if (Math.abs(map[node.X][node.Y]) != 1 && gs.IsWall(node.X, node.Y))

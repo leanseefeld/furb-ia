@@ -21,8 +21,8 @@ class GameState {
 	//Gustavo Sabel - 24/06/2015 - A variável map de GameState estava com a mesma referencia do Map.
 	//Do jeito que estava, acabava "sujando" a variável walls de Map
 	//	this(Map.GetWall(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(Map.OpponentX(),
-	this(copiarArray(Map.GetWall()), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()),
-		new Point(Map.OpponentX(), Map.OpponentY()));
+	this(copiarArray(Map.GetWall()), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(
+		Map.OpponentX(), Map.OpponentY()));
     }
 
     public GameState(GameState gs) {
@@ -149,15 +149,15 @@ class GameState {
     }
 
     public GameState ApplyMoveToMeAndCreate(String direction) {
-	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y),
-		new Point(opponentLocation.X, opponentLocation.Y));
+	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
+		opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToMe(direction);
 	return gs;
     }
 
     public GameState ApplyMoveToOpponentAndCreate(String direction) {
-	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y),
-		new Point(opponentLocation.X, opponentLocation.Y));
+	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
+		opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToOpponent(direction);
 	return gs;
     }
@@ -171,10 +171,12 @@ class GameState {
 	for (int i = 0; i < Map.MOVES.length; i++) {
 	    Point move = new Point(x, y);
 	    move.MoveInDirection(Map.MOVES[i]);
-	    if (!ignoreWalls && !IsWall(move.X, move.Y)) {
-		pontos.add(move);
-	    } else if (ignoreWalls) {
-		pontos.add(move);
+	    if (Map.temIndiceValido(move)) {
+		if (!ignoreWalls && !IsWall(move.X, move.Y)) {
+		    pontos.add(move);
+		} else if (ignoreWalls) {
+		    pontos.add(move);
+		}
 	    }
 	}
 	return pontos;

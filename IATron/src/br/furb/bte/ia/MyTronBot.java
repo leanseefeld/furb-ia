@@ -584,7 +584,6 @@ public class MyTronBot {
 	// runs out of time WAY early resulting in no time to perform alpha beta
 	// iterations
 	String bestMove = Map.MOVES[0]; //PerformFoolishRandomMove();
-	Date lastAlphaBeta;
 
 	List<String> ties = new ArrayList<String>();
 
@@ -654,6 +653,8 @@ public class MyTronBot {
 		    Instant instF = Instant.now();
 		    long duration = java.time.Duration.between(instI, instF).toMillis();
 		    time = duration * (depth * timebase);
+
+		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration);
 		} else {
 		    score = Integer.MIN_VALUE;
 		}
@@ -748,18 +749,16 @@ public class MyTronBot {
 
     private static String MakeMove() {
 	String move = null;
-	//	int width = Map.Width();
-	//	int height = Map.Height();
+	Instant inst = Instant.now();
 	Path path = PerformChaseMove();
+	//	Path path = new Path("Norte", 0);
+	System.out.println("Duração de PerformChaseMove():"
+		+ java.time.Duration.between(inst, Instant.now()).toMillis());
 
-	// means our enemy is attainable
+	//Significa que seu inimigo é alcançável
 	if (path != null) {
-	    move = path.direction;
-	    //if (path.length < (width + height)) {
+	    //	    move = path.direction;
 	    move = PerformNearMove(path);
-	    //} else {
-	    //move = PerformFarMove(path);
-	    //}
 	} else if (path == null) {
 	    move = PerformSurvivalMove();
 	}
@@ -790,5 +789,31 @@ public class MyTronBot {
 	    Map.MakeMove(MakeMove());
 	    System.out.println("Duração do loop: " + Duration() + " ms");
 	}
+    }
+
+    public static void imprimirMapa() {
+	System.out.println(Map.wallsToString());
+    }
+
+    public static void imprimirMapaGameState() {
+	GameState gs = new GameState();
+	StringBuilder str = new StringBuilder();
+	str.append("IA Map: (1=IA, 2=player)\r\n");
+	for (int x = 0; x < gs.map.length; x++) {
+	    for (int y = 0; y < gs.map[x].length; y++) {
+
+		if (gs.MyX() == x && gs.MyY() == y) {
+		    str.append('1');
+		} else if (gs.OpponentX() == x && gs.OpponentY() == y) {
+		    str.append('2');
+		} else if (gs.map[x][y])
+		    str.append('#');
+		else
+		    str.append(' ');
+
+	    }
+	    str.append(" X:" + x + "\r\n");
+	}
+	System.out.println(str.toString());
     }
 }

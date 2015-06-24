@@ -285,20 +285,34 @@ class Map {
     private static void MakeMove(int direction) {
 	System.out.println(direction);
     }
-    
+
     public static String wallsToString() {
 	StringBuilder str = new StringBuilder();
-	str.append("Walls: \r\n");
+	str.append("IA Map: (1=IA, 2=player)\r\n");
 	for (int x = 0; x < walls.length; x++) {
 	    for (int y = 0; y < walls[x].length; y++) {
-		if (walls[x][y])
+
+		if (myLocation.X == x && myLocation.Y == y) {
+		    str.append('1');
+		} else if (opponentLocation.X == x && opponentLocation.Y == y) {
+		    str.append('2');
+		} else if (walls[x][y])
 		    str.append('#');
 		else
 		    str.append(' ');
+
 	    }
-	    str.append(" X:" +x + "\r\n");
+	    str.append(" X:" + x + "\r\n");
 	}
 	return str.toString();
+    }
+
+    public static boolean temIndiceValido(Point ponto) {
+	return //
+	/*    */ponto.X >= 0 && //
+		ponto.X < Map.width && //
+		ponto.Y >= 0 && //
+		ponto.X < Map.height;
     }
 
 }
