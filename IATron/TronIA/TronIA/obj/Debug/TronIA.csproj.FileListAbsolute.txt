@@ -1,5 +1,0 @@
-c:\users\gustavo\documents\visual studio 2013\Projects\TronIA\TronIA\bin\Debug\TronIA.dll
-c:\users\gustavo\documents\visual studio 2013\Projects\TronIA\TronIA\bin\Debug\TronIA.pdb
-c:\users\gustavo\documents\visual studio 2013\Projects\TronIA\TronIA\obj\Debug\TronIA.csprojResolveAssemblyReference.cache
-c:\users\gustavo\documents\visual studio 2013\Projects\TronIA\TronIA\obj\Debug\TronIA.dll
-c:\users\gustavo\documents\visual studio 2013\Projects\TronIA\TronIA\obj\Debug\TronIA.pdb
