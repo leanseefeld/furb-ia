@@ -25,7 +25,7 @@ class Territory {
     // modified flood fill to scan outwards from each players' locations
     // and mark their territories
     private void scan() {
-	map = new int[gs.Width()][gs.Height()];
+	map = new int[gs.getWidth()][gs.getHeight()];
 
 	Queue<Point> q = new LinkedList<Point>();
 	q.add(me);
@@ -40,10 +40,10 @@ class Territory {
 	while (!q.isEmpty()) {
 	    Point node = q.poll();
 	    //	    if (node.X < 0 || node.Y < 0 || node.X >= gs.Width() || node.Y >= gs.Height())
-	    if (!Map.temIndiceValido(node))
+	    if (!Map.isValid(node))
 		continue;
 	    // exclude first nodes from this check
-	    if (Math.abs(map[node.X][node.Y]) != 1 && gs.IsWall(node.X, node.Y))
+	    if (Math.abs(map[node.X][node.Y]) != 1 && gs.isWall(node.X, node.Y))
 		continue;
 
 	    level = map[node.X][node.Y];
@@ -79,16 +79,33 @@ class Territory {
 	    Point west = new Point(node.X - 1, node.Y);
 	    if (ProcessNeighbour(west, level, player))
 		q.add(west);
-
 	}
+    }
 
+    @Override
+    public String toString() {
+	StringBuilder str = new StringBuilder();
+	str.append("Território: (OP = Oponente/Player1) \r\n");
+	for (int x = 0; x < map.length; x++) {
+	    for (int y = 0; y < map[x].length; y++) {
+		if (me.isSamePosition(x, y)) {
+		    str.append("IA").append("\t");
+		} else if (you.isSamePosition(x, y)) {
+		    str.append("OP").append("\t");
+		} else {
+		    str.append(map[x][y]).append("\t");
+		}
+	    }
+	    str.append("\r\n");
+	}
+	return str.toString();
     }
 
     private boolean ProcessNeighbour(Point node, int level, int player) {
-	if (node.X < 0 || node.Y < 0 || node.X >= gs.Width() || node.Y >= gs.Height())
+	if (node.X < 0 || node.Y < 0 || node.X >= gs.getWidth() || node.Y >= gs.getHeight())
 	    return false;
 
-	if (gs.IsWall(node.X, node.Y))
+	if (gs.isWall(node.X, node.Y))
 	    return false;
 
 	int val = map[node.X][node.Y];

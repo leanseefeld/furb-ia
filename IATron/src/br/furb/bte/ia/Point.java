@@ -1,52 +1,74 @@
 package br.furb.bte.ia;
 
-public class Point
-{
+public class Point {
+
     public int X, Y;
+    public Direction direction;
 
-    public String GetDirectionFromPoint(int x, int y)
-    {
-        if (Y < y) return "North";
-        if (Y > y) return "South";
-        if (X > x) return "East";
-        if (X < x) return "West";
-
-        // returning null to force exception so I know if this is broken
-        // SO BAD! 
-        return null;
+    public void setDirecao(String name) {
+	this.direction = Direction.getDirecaoByName(name);
     }
 
-    public void MoveInDirection(String direction)
-    {
-	char firstChar = direction.toUpperCase().charAt(0);
-//        String temp = direction.Substring(0, 1).ToUpper();
-//        int firstChar = (int)temp[0];
-
-        switch (firstChar)
-        {
-            case 'N':
-                --Y;
-                break;
-            case 'S':
-                ++Y;
-                break;
-            case 'W':
-                --X;
-                break;
-            case 'E':
-                ++X;
-                break;
-        }
+    public void setDirecao(Direction direcao) {
+	this.direction = direcao;
     }
 
-    public Point()
-    {
-        X = 0; Y = 0;
+    public Direction getDirecao() {
+	return direction;
     }
 
-    public Point(int x, int y)
-    {
-        X = x;
-        Y = y;
+    public String getDirecaoString() {
+	if (direction != null)
+	    return direction.name();
+	return "Sem direcao";
+    }
+
+    public Direction getDirectionFromPoint(int x, int y) {
+	if (Y < y)
+	    return Direction.North;
+	if (Y > y)
+	    return Direction.South;
+	if (X > x)
+	    return Direction.East;
+	if (X < x)
+	    return Direction.West;
+	return null;
+    }
+
+    public void moveInDirection(Direction direction) {
+	this.direction = direction;
+	switch (direction) {
+	    case North:
+		--Y;
+		break;
+	    case South:
+		++Y;
+		break;
+	    case West://oeste
+		--X;
+		break;
+	    case East://leste
+		++X;
+		break;
+	}
+    }
+
+    public Point() {
+	X = 0;
+	Y = 0;
+    }
+
+    public Point(int x, int y) {
+	X = x;
+	Y = y;
+    }
+
+    @Override
+    public String toString() {
+	return "X:" + X + " Y:" + Y + " direction: " + this.getDirecaoString();
+    }
+
+    public boolean isSamePosition(int x, int y) {
+	return this.X == x && this.Y == y;
     }
 }

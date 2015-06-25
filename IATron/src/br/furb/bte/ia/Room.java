@@ -24,16 +24,16 @@ class Room {
     }
 
     private boolean[][] scanX() {
-	boolean[][] scan = new boolean[gs.Width()][gs.Height()];
+	boolean[][] scan = new boolean[gs.getWidth()][gs.getHeight()];
 	int x = start.X;
 
-	for (int y = 0; y < gs.Height(); y++) {
-	    while (!gs.IsWall(++x, y)) {
+	for (int y = 0; y < gs.getHeight(); y++) {
+	    while (!gs.isWall(++x, y)) {
 		scan[x][y] = true;
 	    }
 
 	    x = start.X;
-	    while (!gs.IsWall(--x, y)) {
+	    while (!gs.isWall(--x, y)) {
 		scan[x][y] = true;
 	    }
 	}
@@ -43,16 +43,16 @@ class Room {
 
     private boolean[][] scanY()
 	{
-		boolean[][] scan = new boolean[gs.Width()][gs.Height()];
+		boolean[][] scan = new boolean[gs.getWidth()][gs.getHeight()];
 		int y = start.Y;
 
-		for(int x=0; x < gs.Width(); x++) {
-			while(!gs.IsWall(x,++y)) {
+		for(int x=0; x < gs.getWidth(); x++) {
+			while(!gs.isWall(x,++y)) {
 				scan[x][y] = true;
 			}
 
 			y = start.Y;
-			while(!gs.IsWall(x,--y)) {
+			while(!gs.isWall(x,--y)) {
 				scan[x][y] = true;
 			}
 		}
@@ -67,9 +67,9 @@ class Room {
 	boolean[][] yscan = scanY();
 
 	// intersect row and column scans to determine room size
-	boolean[][] room = new boolean[gs.Width()][gs.Height()];
-	for (int y = 0; y < gs.Height(); y++) {
-	    for (int x = 0; x < gs.Width(); x++) {
+	boolean[][] room = new boolean[gs.getWidth()][gs.getHeight()];
+	for (int y = 0; y < gs.getHeight(); y++) {
+	    for (int x = 0; x < gs.getWidth(); x++) {
 		room[x][y] = xscan[x][y] && yscan[x][y];
 		if (room[x][y]) {
 		    size++;

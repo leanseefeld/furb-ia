@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 
 class Map {
 
-    public static final String[] MOVES = new String[] { "North", "East", "South", "West" };
     // Stores the width and height of the Tron map.
     private static int width, height;
 
@@ -307,7 +306,7 @@ class Map {
 	return str.toString();
     }
 
-    public static boolean temIndiceValido(Point ponto) {
+    public static boolean isValid(Point ponto) {
 	return //
 	/*    */ponto.X >= 0 && //
 		ponto.X < Map.width && //

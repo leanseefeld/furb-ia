@@ -21,12 +21,13 @@ class GameState {
 	//Gustavo Sabel - 24/06/2015 - A variável map de GameState estava com a mesma referencia do Map.
 	//Do jeito que estava, acabava "sujando" a variável walls de Map
 	//	this(Map.GetWall(), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(Map.OpponentX(),
-	this(copiarArray(Map.GetWall()), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(
+	this(cloneArray(Map.GetWall()), Map.Width(), Map.Height(), new Point(Map.MyX(), Map.MyY()), new Point(
 		Map.OpponentX(), Map.OpponentY()));
     }
 
     public GameState(GameState gs) {
-	this(gs.map, gs.Width(), gs.Height(), new Point(gs.MyX(), gs.MyY()), new Point(gs.OpponentX(), gs.OpponentY()));
+	this(gs.map, gs.getWidth(), gs.getHeight(), new Point(gs.MyX(), gs.MyY()), new Point(gs.OpponentX(),
+		gs.OpponentY()));
 	this.map = (boolean[][]) gs.map.clone();
     }
 
@@ -74,15 +75,15 @@ class GameState {
 	return parent;
     }
 
-    public int Width() {
+    public int getWidth() {
 	return width;
     }
 
-    public int Height() {
+    public int getHeight() {
 	return height;
     }
 
-    public boolean IsWall(int x, int y) {
+    public boolean isWall(int x, int y) {
 	if (x < 0 || y < 0 || x >= width || y >= height) {
 	    return true;
 	} else {
@@ -126,10 +127,10 @@ class GameState {
 	return IsDraw() || IsMyWin() || IsOpponentWin();
     }
 
-    public void ApplyMoveToMe(String direction) {
+    public void ApplyMoveToMe(Direction direction) {
 	//	Console.Error.WriteLine("Applying  move to me:" + direction);
 	//Console.Error.WriteLine(String.Format("Before X:{0} Y:{1}, MapX:{2} MapY:{3}",MyX(), MyY(),Map.MyX(), Map.MyY()));
-	myLocation.MoveInDirection(direction);
+	myLocation.moveInDirection(direction);
 	if (map[myLocation.X][myLocation.Y]) {
 	    opponentWin = true;
 	} else {
@@ -138,9 +139,9 @@ class GameState {
 	//Console.Error.WriteLine(String.Format("After X:{0} Y:{1}, MapX:{2} MapY:{3}",MyX(), MyY(),Map.MyX(), Map.MyY()));
     }
 
-    public void ApplyMoveToOpponent(String direction) {
+    public void ApplyMoveToOpponent(Direction direction) {
 	//	Console.Error.WriteLine("Applying  move to opponent:" + direction);
-	opponentLocation.MoveInDirection(direction);
+	opponentLocation.moveInDirection(direction);
 	if (map[opponentLocation.X][opponentLocation.Y]) {
 	    myWin = true;
 	} else {
@@ -148,31 +149,31 @@ class GameState {
 	}
     }
 
-    public GameState ApplyMoveToMeAndCreate(String direction) {
-	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
+    public GameState ApplyMoveToMeAndCreate(Direction direction) {
+	GameState gs = new GameState(cloneArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
 		opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToMe(direction);
 	return gs;
     }
 
-    public GameState ApplyMoveToOpponentAndCreate(String direction) {
-	GameState gs = new GameState(copiarArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
+    public GameState ApplyMoveToOpponentAndCreate(Direction direction) {
+	GameState gs = new GameState(cloneArray(map), width, height, new Point(myLocation.X, myLocation.Y), new Point(
 		opponentLocation.X, opponentLocation.Y));
 	gs.ApplyMoveToOpponent(direction);
 	return gs;
     }
 
     public Iterable<Point> PossibleMoves(int x, int y) {
-	return PossibleMoves(x, y, false);
+	return possibleMoves(x, y, false);
     }
 
-    public Iterable<Point> PossibleMoves(int x, int y, boolean ignoreWalls) {
+    public Iterable<Point> possibleMoves(int x, int y, boolean ignoreWalls) {
 	List<Point> pontos = new ArrayList<Point>();
-	for (int i = 0; i < Map.MOVES.length; i++) {
+	for (int i = 0; i < Direction.values().length; i++) {
 	    Point move = new Point(x, y);
-	    move.MoveInDirection(Map.MOVES[i]);
-	    if (Map.temIndiceValido(move)) {
-		if (!ignoreWalls && !IsWall(move.X, move.Y)) {
+	    move.moveInDirection(Direction.values()[i]);
+	    if (Map.isValid(move)) {
+		if (!ignoreWalls && !isWall(move.X, move.Y)) {
 		    pontos.add(move);
 		} else if (ignoreWalls) {
 		    pontos.add(move);
@@ -182,11 +183,19 @@ class GameState {
 	return pontos;
     }
 
-    public static boolean[][] copiarArray(boolean[][] orignal) {
+    public static boolean[][] cloneArray(boolean[][] orignal) {
 	boolean[][] copia = new boolean[orignal.length][orignal[0].length];
 	for (int i = 0; i < orignal.length; i++) {
 	    copia[i] = Arrays.copyOf(orignal[i], orignal[i].length);
 	}
 	return copia;
+    }
+
+    public Point getOpponent() {
+	return this.opponentLocation;
+    }
+
+    public Point getMe() {
+	return this.myLocation;
     }
 }

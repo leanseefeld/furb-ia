@@ -2,7 +2,6 @@ package br.furb.bte.ia;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -13,12 +12,12 @@ public class MyTronBot {
     private static final int TIME_LIMIT = 1000;
     private static final int TIME_THRESHOLD = 150;
     private static final int MAX_MAP_SIZE = 2500;
+    private static final int MAX_DEPTH = 12;
 
     private static Instant lastTime;
 
     // making these global to reduce garbage collection
     private static final Stack<GameState> toVisitStack = new Stack<GameState>();
-    private static final Queue<GameState> toVisit = new LinkedList<GameState>();
     private static final List<GameState> visited = new ArrayList<GameState>();
 
     private static float GetEuclideanOpponentDistance(int x, int y) {
@@ -75,17 +74,11 @@ public class MyTronBot {
 	    return -MAX_MAP_SIZE;
 	}
 
-	//	if (gs.IsDraw()) {
-	//	    //		return 0
-	//	}
-
 	Territory room = new Territory(gs);
 	room.DetermineTerritories();
-
-	//	int mySize = room.GetMySize();
-	//	int opponentSize = room.GetOpponentSize();
 	int size = room.GetMySize() - room.GetOpponentSize();
-	//Console.Error.WriteLine(String.Format("my room:{0} other room:{1}",mySize,opponentSize));	
+	//	System.out.println("IA:" + room.GetMySize() + " OP:" + room.GetOpponentSize());
+	System.out.println(room.toString());
 
 	return (float) size;
     }
@@ -104,64 +97,44 @@ public class MyTronBot {
 	}
 
 	GameState newState = null;
-	for (Point child : gs.PossibleMoves(p.X, p.Y, true)) {
+	for (Point child : gs.possibleMoves(p.X, p.Y, true)) {
+	    Direction newDirection = child.getDirectionFromPoint(p.X, p.Y);
 	    if (isMax) {
-		newState = gs.ApplyMoveToMeAndCreate(child.GetDirectionFromPoint(p.X, p.Y));
+		newState = gs.ApplyMoveToMeAndCreate(newDirection);
 	    } else {
-		newState = gs.ApplyMoveToOpponentAndCreate(child.GetDirectionFromPoint(p.X, p.Y));
+		newState = gs.ApplyMoveToOpponentAndCreate(newDirection);
 	    }
 
-	    alpha = Math.max(alpha, -AlphaBeta(newState, depth - 1, -beta, -alpha, !isMax));
+	    float alphaAux = -AlphaBeta(newState, depth - 1, -beta, -alpha, !isMax);
+	    System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " Direction:" + newDirection
+		    + " alpha:" + alphaAux);
+	    alpha = Math.max(alpha, alphaAux);
 	    if (beta <= alpha) {
 		break;
 	    }
 	}
 
+	//	Point locationPlayerOrigem;
+	//	if (isMax)
+	//	    locationPlayerOrigem = gs.getOpponent();
+	//	else
+	//	    locationPlayerOrigem = gs.getMe();
+	//
+	//	System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " alpha:" + alpha + " Best Direction:"
+	//		+ locationPlayerOrigem.getDirecaoString());
 	return alpha;
     }
 
-    private static int ScoreStraightPath(String direction) {
-	return ScoreStraightPath(direction, new Point(Map.MyX(), Map.MyY()));
-    }
-
-    private static int ScoreStraightPath(String direction, Point p) {
+    private static int ScoreStraightPath(Direction direction, Point p) {
 	int score = 0;
-	p.MoveInDirection(direction);
+	p.moveInDirection(direction);
 
 	while (!Map.IsWall(p.X, p.Y)) {
 	    score++;
-	    p.MoveInDirection(direction);
+	    p.moveInDirection(direction);
 	}
 
 	return score;
-    }
-
-    private static int BreadthFirst(GameState gs) {
-	return BreadthFirst(gs, true);
-    }
-
-    private static int BreadthFirst(GameState gs, boolean me) {
-	toVisit.clear();
-	visited.clear();
-	toVisit.add(gs);
-
-	while (!toVisit.isEmpty()) {
-	    GameState v = toVisit.poll();
-	    if (!visited.contains(v)) {
-		visited.add(v);
-		if (me) {
-		    for (Point n : gs.PossibleMoves(v.MyX(), v.MyY())) {
-			toVisit.add(v.ApplyMoveToMeAndCreate(n.GetDirectionFromPoint(v.MyX(), v.MyY())));
-		    }
-		} else {
-		    for (Point n : gs.PossibleMoves(v.OpponentX(), v.OpponentY())) {
-			toVisit.add(v.ApplyMoveToOpponentAndCreate(n.GetDirectionFromPoint(v.OpponentX(), v.OpponentY())));
-		    }
-		}
-	    }
-	}
-
-	return visited.size();
     }
 
     private static int FloodFill(GameState gs, int x, int y) {
@@ -178,7 +151,7 @@ public class MyTronBot {
 
 	while (!q.isEmpty()) {
 	    Point n = q.poll();
-	    if (n.X < 0 || n.Y < 0 || n.X >= gs.Width() || n.Y >= gs.Height())
+	    if (n.X < 0 || n.Y < 0 || n.X >= gs.getWidth() || n.Y >= gs.getHeight())
 		continue;
 
 	    // process neighbours, mark as visited and increment count
@@ -216,12 +189,12 @@ public class MyTronBot {
 		if (me) {
 		    score += FloodFill(v, v.MyX(), v.MyY());
 		    for (Point n : gs.PossibleMoves(v.MyX(), v.MyY())) {
-			toVisitStack.push(v.ApplyMoveToMeAndCreate(n.GetDirectionFromPoint(v.MyX(), v.MyY())));
+			toVisitStack.push(v.ApplyMoveToMeAndCreate(n.getDirectionFromPoint(v.MyX(), v.MyY())));
 		    }
 		} else {
 		    score += FloodFill(v, v.OpponentX(), v.OpponentY());
 		    for (Point n : gs.PossibleMoves(v.OpponentX(), v.OpponentY())) {
-			toVisitStack.push(v.ApplyMoveToOpponentAndCreate(n.GetDirectionFromPoint(v.OpponentX(),
+			toVisitStack.push(v.ApplyMoveToOpponentAndCreate(n.getDirectionFromPoint(v.OpponentX(),
 				v.OpponentY())));
 		    }
 
@@ -246,7 +219,8 @@ public class MyTronBot {
 	    cost += parent.GetScore();
 	    if (parent.MyX() == Map.MyX() && parent.MyY() == Map.MyY()) {
 		//Console.Error.WriteLine("Got move");
-		String direction = new Point(current.MyX(), current.MyY()).GetDirectionFromPoint(Map.MyX(), Map.MyY());
+		Direction direction = new Point(current.MyX(), current.MyY()).getDirectionFromPoint(Map.MyX(),
+			Map.MyY());
 		return new Path(direction, length, cost);
 	    } else {
 		current = parent;
@@ -288,18 +262,18 @@ public class MyTronBot {
 	    if (!visited.contains(v)) {
 		visited.add(v);
 
-		for (Point n : gs.PossibleMoves(v.MyX(), v.MyY(), true)) {
+		for (Point n : gs.possibleMoves(v.MyX(), v.MyY(), true)) {
 
 		    // goal found
 		    if (goal != null && n.X == goal.X && n.Y == goal.Y) {
 			//Console.Error.WriteLine("Found");
-			GameState found = v.ApplyMoveToMeAndCreate(n.GetDirectionFromPoint(v.MyX(), v.MyY()));
+			GameState found = v.ApplyMoveToMeAndCreate(n.getDirectionFromPoint(v.MyX(), v.MyY()));
 			found.SetParent(v);
 			return GetPath(found);
 
 			// add neighbours to queue
-		    } else if (!v.IsWall(n.X, n.Y)) {
-			GameState next = v.ApplyMoveToMeAndCreate(n.GetDirectionFromPoint(v.MyX(), v.MyY()));
+		    } else if (!v.isWall(n.X, n.Y)) {
+			GameState next = v.ApplyMoveToMeAndCreate(n.getDirectionFromPoint(v.MyX(), v.MyY()));
 
 			if (toVisit.contains(next)) {
 			    GameState parent = toVisit.get(toVisit.indexOf(next)).GetParent();
@@ -335,34 +309,34 @@ public class MyTronBot {
 
     // Determine which direction has the most available spaces and fill
     // as efficiently as possible
-    private static String PerformSurvivalMove() {
+    private static Direction PerformSurvivalMove() {
 	float score = 0;
 	float bestScore = 0;
 
 	GameState gs = new GameState();
 	Point p = new Point();
-	String bestMove = Map.MOVES[0];
+	Direction bestMove = Direction.values()[0];
 
-	List<String> ties = new ArrayList<String>();
+	List<Direction> ties = new ArrayList<Direction>();
 
-	for (int i = 0; i < Map.MOVES.length; i++) {
+	for (int i = 0; i < Direction.values().length; i++) {
 	    p.X = Map.MyX();
 	    p.Y = Map.MyY();
-	    p.MoveInDirection(Map.MOVES[i]);
+	    p.moveInDirection(Direction.values()[i]);
 	    if (!Map.IsWall(p.X, p.Y)) {
 		//score = FloodFill(gs.ApplyMoveToMeAndCreate(Map.MOVES[i]), p.X, p.Y);
-		score = FloodFillDepthFirst(gs.ApplyMoveToMeAndCreate(Map.MOVES[i]));
+		score = FloodFillDepthFirst(gs.ApplyMoveToMeAndCreate(Direction.values()[i]));
 	    } else {
 		score = 0;
 	    }
 	    //Console.Error.WriteLine("Far:" + Map.MOVES[i] + ":" + score);
 	    if (score > bestScore) {
-		bestMove = Map.MOVES[i];
+		bestMove = Direction.values()[i];
 		bestScore = score;
 		ties.clear();
 		ties.add(bestMove);
 	    } else if (score == bestScore) {
-		ties.add(Map.MOVES[i]);
+		ties.add(Direction.values()[i]);
 	    }
 	}
 
@@ -370,16 +344,16 @@ public class MyTronBot {
 	// hug closest wall
 	if (!ties.isEmpty()) {
 	    bestScore = Integer.MAX_VALUE;
-	    for (String move : ties) {
+	    for (Direction move : ties) {
 		p.X = Map.MyX();
 		p.Y = Map.MyY();
-		p.MoveInDirection(move);
+		p.moveInDirection(move);
 		// use shortest distance to closest wall
 		score = Integer.MAX_VALUE;
 		int tmp;
-		for (String direction : Map.MOVES) {
+		for (Direction direction : Direction.values()) {
 		    Point q = new Point(p.X, p.Y);
-		    q.MoveInDirection(direction);
+		    q.moveInDirection(direction);
 		    if (q.X == Map.MyX() && q.Y == Map.MyY()) {
 			continue;
 		    }
@@ -498,83 +472,8 @@ public class MyTronBot {
        }
     */
 
-    private static String PerformFarMove() {
-	return PerformFarMove(null);
-    }
-
-    // Determine which direction has the most available spaces 
-    // NOT USED
-    private static String PerformFarMove(Path shortestPath) {
-	float score = 0;
-	float bestScore = 0;
-
-	GameState gs = new GameState();
-	Point p = new Point();
-	String bestMove = Map.MOVES[0];
-
-	List<String> ties = new ArrayList<String>();
-
-	for (int i = 0; i < Map.MOVES.length; i++) {
-	    p.X = Map.MyX();
-	    p.Y = Map.MyY();
-	    p.MoveInDirection(Map.MOVES[i]);
-	    if (!Map.IsWall(p.X, p.Y)) {
-		score = BreadthFirst(gs.ApplyMoveToMeAndCreate(Map.MOVES[i]));
-	    } else {
-		score = 0;
-	    }
-	    //Console.Error.WriteLine("Far:" + Map.MOVES[i] + ":" + score + " bestscore:" + bestScore);
-	    if (score > bestScore) {
-		bestMove = Map.MOVES[i];
-		bestScore = score;
-		ties.clear();
-		ties.add(bestMove);
-	    } else if (score == bestScore) {
-		ties.add(Map.MOVES[i]);
-	    }
-	}
-
-	// break ties
-	if (ties.size() > 1) {
-	    if (shortestPath != null) {
-		return shortestPath.direction;
-	    }
-	    bestScore = Integer.MAX_VALUE;
-	    for (String move : ties) {
-		p.X = Map.MyX();
-		p.Y = Map.MyY();
-		p.MoveInDirection(move);
-		if (shortestPath == null) {
-		    // use shortest distance to closest wall
-		    score = Integer.MAX_VALUE;
-		    int tmp;
-		    for (String direction : Map.MOVES) {
-			Point q = new Point(p.X, p.Y);
-			q.MoveInDirection(direction);
-			if (q.X == Map.MyX() && q.Y == Map.MyY()) {
-			    continue;
-			}
-			q.X = p.X;
-			q.Y = p.Y;
-			tmp = ScoreStraightPath(direction, q);
-			if (tmp < score) {
-			    score = tmp;
-			}
-		    }
-		}
-		//Console.Error.WriteLine("Far tie break:" + move + ":" + score);
-		if (score < bestScore) {
-		    bestScore = score;
-		    bestMove = move;
-		}
-	    }
-	}
-
-	return bestMove;
-    }
-
     // alpha beta with iterative deepening
-    private static String PerformNearMove(Path shortestPath) {
+    private static Direction PerformNearMove(Path shortestPath) {
 	int depth = 0;
 	float time = 0;
 	float score, bestScore;
@@ -583,11 +482,11 @@ public class MyTronBot {
 	// default to something that won't kill us - server sometimes
 	// runs out of time WAY early resulting in no time to perform alpha beta
 	// iterations
-	String bestMove = Map.MOVES[0]; //PerformFoolishRandomMove();
+	Direction bestMove = Direction.values()[0]; //PerformFoolishRandomMove();
 
-	List<String> ties = new ArrayList<String>();
+	List<Direction> ties = new ArrayList<Direction>();
 
-	String[] moves = new String[4];
+	Direction[] moves = new Direction[4];
 	float[] scores = new float[4]; // 0 north, 1 south, 2 east, 3 west
 	scores[0] = 3;
 	scores[1] = 2;
@@ -597,7 +496,7 @@ public class MyTronBot {
 	// used to adjust time estimate for next depth so we don't go over time limit
 	float timebase = ((float) Map.Width() * (float) Map.Height()) / (15f * 15f);
 
-	while (Duration() + time < (TIME_LIMIT - TIME_THRESHOLD) && depth <= 12) {
+	while (Duration() + time < (TIME_LIMIT - TIME_THRESHOLD) && depth <= MAX_DEPTH) {
 	    score = Integer.MIN_VALUE;
 	    bestScore = Integer.MIN_VALUE;
 	    depth++;
@@ -608,17 +507,17 @@ public class MyTronBot {
 	    int length = scores.length;
 	    boolean swapped = true;
 
-	    moves[0] = "North";
-	    moves[1] = "South";
-	    moves[2] = "East";
-	    moves[3] = "West";
+	    moves[0] = Direction.North;
+	    moves[1] = Direction.South;
+	    moves[2] = Direction.East;
+	    moves[3] = Direction.West;
 
-	    //Est� ordenando os movimentos pela melhor pontua��o
+	    //Está ordenando os movimentos pela melhor pontuação
 	    while (swapped) {
 		swapped = false;
 		for (int b = 0; b < length - 1; b++) {
 		    if (scores[b] < scores[b + 1]) {
-			String tmp = moves[b];
+			Direction tmp = moves[b];
 			float ftmp = scores[b];
 
 			moves[b] = moves[b + 1];
@@ -631,30 +530,31 @@ public class MyTronBot {
 		    }
 		}
 		length -= 1;
+	    }
 
-		//Console.Error.WriteLine("best:" + best + " score:" + scores[best]);
+	    System.out.println("Melhores Scores");
+	    for (int i = 0; i < scores.length; i++) {
+		System.out.println(" Score: " + scores[i] + "\t " + moves[i]);
 	    }
 
 	    for (int i = 0; i < moves.length; i++) {
-		String move = moves[i];
+		Direction move = moves[i];
 		p.X = Map.MyX();
 		p.Y = Map.MyY();
-		p.MoveInDirection(move);
+		p.moveInDirection(move);
 		if (!Map.IsWall(p.X, p.Y)) {
 		    Instant instI = Instant.now();
 		    // negate since starting with opponents moves
-		    //                    lastAlphaBeta = Date.Now;
 		    score = -AlphaBeta(gs.ApplyMoveToMeAndCreate(move), depth, -Integer.MAX_VALUE, Integer.MAX_VALUE,
 			    false);
 
 		    // estimate time for next depth
-		    //                    TimeSpan ts = DateTime.Now - lastAlphaBeta;
-		    //                    time = (float)ts.Milliseconds * (depth * timebase);
 		    Instant instF = Instant.now();
 		    long duration = java.time.Duration.between(instI, instF).toMillis();
 		    time = duration * (depth * timebase);
 
-		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration);
+		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration + " BestScore:" + score
+			    + " Direction:" + move.name());
 		} else {
 		    score = Integer.MIN_VALUE;
 		}
@@ -671,34 +571,40 @@ public class MyTronBot {
 		// track score
 		//                String temp = move.Substring(0, 1).ToUpper();
 		//                int firstChar = (int)temp[0];
-		char firstChar = move.toUpperCase().charAt(0);
-		switch (firstChar) {
-		    case 'N':
+		switch (move) {
+		    case North:
 			scores[0] = score;
 			break;
-		    case 'S':
+		    case South:
 			scores[1] = score;
 			break;
-		    case 'E':
+		    case East:
 			scores[2] = score;
 			break;
-		    case 'W':
+		    case West:
 			scores[3] = score;
 			break;
 		}
 	    }
+	    System.out.println("Fim Depth: " + depth + " " + (false ? "MAX" : "MIN") + " alpha:" + score);
+
 	    depth++;
 	}
 
-	List<String> secondaryTies = new ArrayList<String>();
+	System.out.println("Melhores direcoes");
+	for (int i = 0; i < ties.size(); i++) {
+	    System.out.println(" * " + ties.get(i));
+	}
+
+	List<Direction> secondaryTies = new ArrayList<Direction>();
 	// break ties
 	if (ties.size() > 1) {
 	    bestScore = Integer.MIN_VALUE;
-	    for (String move : ties) {
+	    for (Direction move : ties) {
 		//Console.Error.WriteLine("alpha tie break:" + move);
 		p.X = Map.MyX();
 		p.Y = Map.MyY();
-		p.MoveInDirection(move);
+		p.moveInDirection(move);
 		if (Map.IsWall(p.X, p.Y)) {
 		    continue;
 		}
@@ -722,7 +628,7 @@ public class MyTronBot {
 	// kinda lame, but need another tie breaker...quick and dirty
 	if (secondaryTies.size() > 1) {
 	    bestScore = Integer.MIN_VALUE;
-	    for (String move : ties) {
+	    for (Direction move : ties) {
 		if (shortestPath != null) {
 		    if (move.equals(shortestPath.direction)) {
 			bestMove = shortestPath.direction;
@@ -731,7 +637,7 @@ public class MyTronBot {
 		}
 		p.X = Map.MyX();
 		p.Y = Map.MyY();
-		p.MoveInDirection(move);
+		p.moveInDirection(move);
 		if (Map.IsWall(p.X, p.Y)) {
 		    continue;
 		}
@@ -748,7 +654,7 @@ public class MyTronBot {
     }
 
     private static String MakeMove() {
-	String move = null;
+	Direction move = null;
 	Instant inst = Instant.now();
 	Path path = PerformChaseMove();
 	//	Path path = new Path("Norte", 0);
@@ -763,7 +669,7 @@ public class MyTronBot {
 	    move = PerformSurvivalMove();
 	}
 
-	return move;
+	return move.name();
     }
 
     private static long Duration() {
