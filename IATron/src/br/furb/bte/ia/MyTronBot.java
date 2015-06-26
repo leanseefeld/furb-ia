@@ -636,18 +636,18 @@ public class MyTronBot {
 
     private static Direction MakeMove() {
 	Direction move = null;
-	Instant inst = Instant.now();
+//	Instant inst = Instant.now();
 	Path path = PerformChaseMove();
 	//	Path path = new Path("Norte", 0);
-	System.out.println("Duração de PerformChaseMove():"
-		+ java.time.Duration.between(inst, Instant.now()).toMillis());
+//	System.out.println("Duração de PerformChaseMove():"
+//		+ java.time.Duration.between(inst, Instant.now()).toMillis());
 
 	//Significa que seu inimigo é alcançável
 	if (path != null) {
-	    System.out.println("PerformNearMove(path)");
+//	    System.out.println("PerformNearMove(path)");
 	    move = PerformNearMove(path);
 	} else if (path == null) {
-	    System.out.println("PerformSurvivalMove()");
+//	    System.out.println("PerformSurvivalMove()");
 	    move = PerformSurvivalMove();
 	}
 
