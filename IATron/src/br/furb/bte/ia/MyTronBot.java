@@ -106,8 +106,8 @@ public class MyTronBot {
 	    }
 
 	    float alphaAux = -AlphaBeta(newState, depth - 1, -beta, -alpha, !isMax);
-//	    System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " Direction:" + newDirection
-//		    + " alpha:" + alphaAux);
+	    //	    System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " Direction:" + newDirection
+	    //		    + " alpha:" + alphaAux);
 	    alpha = Math.max(alpha, alphaAux);
 	    if (beta <= alpha) {
 		break;
@@ -310,7 +310,7 @@ public class MyTronBot {
 
 	List<Direction> ties = new ArrayList<Direction>();
 
-//	System.out.println(Map.wallsToString());
+	//	System.out.println(Map.wallsToString());
 
 	for (Direction direction : Direction.values()) {
 	    p.X = Map.MyX();
@@ -506,7 +506,7 @@ public class MyTronBot {
 	    moves[2] = Direction.East;
 	    moves[3] = Direction.West;
 
-	    //Está ordenando os movimentos pela melhor pontuação
+	    //EstÃ¡ ordenando os movimentos pela melhor pontuaÃ§Ã£o
 	    while (swapped) {
 		swapped = false;
 		for (int b = 0; b < length - 1; b++) {
@@ -542,8 +542,8 @@ public class MyTronBot {
 		    long duration = java.time.Duration.between(instI, instF).toMillis();
 		    time = duration * (depth * timebase);
 
-//		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration + " BestScore:" + score
-//			    + " Direction:" + move.name());
+		    //		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration + " BestScore:" + score
+		    //			    + " Direction:" + move.name());
 		} else {
 		    score = Integer.MIN_VALUE;
 		}
@@ -572,7 +572,7 @@ public class MyTronBot {
 			break;
 		}
 	    }
-//	    System.out.println("Fim Depth: " + depth + " " + (false ? "MAX" : "MIN") + " alpha:" + score);
+	    //	    System.out.println("Fim Depth: " + depth + " " + (false ? "MAX" : "MIN") + " alpha:" + score);
 
 	    depth++;
 	}
@@ -639,15 +639,21 @@ public class MyTronBot {
 	Instant inst = Instant.now();
 	Path path = PerformChaseMove();
 	//	Path path = new Path("Norte", 0);
-	System.out.println("Duração de PerformChaseMove():"
-		+ java.time.Duration.between(inst, Instant.now()).toMillis());
+	if (Parametros.TRACE_IA) {
+	    System.out.println("Duração de PerformChaseMove():"
+		    + java.time.Duration.between(inst, Instant.now()).toMillis());
+	}
 
 	//Significa que seu inimigo é alcançável
 	if (path != null) {
-	    System.out.println("PerformNearMove(path)");
+	    if (Parametros.TRACE_IA) {
+		System.out.println("PerformNearMove(path)");
+	    }
 	    move = PerformNearMove(path);
 	} else if (path == null) {
-	    System.out.println("PerformSurvivalMove()");
+	    if (Parametros.TRACE_IA) {
+		System.out.println("PerformSurvivalMove()");
+	    }
 	    move = PerformSurvivalMove();
 	}
 
@@ -665,7 +671,9 @@ public class MyTronBot {
 	Map.Initialize(mapa);
 	lastTime = Instant.now();
 	Direction move = MakeMove();
-	System.out.println("Duração do loop: " + Duration() + " ms");
+	if (Parametros.TRACE_IA) {
+	    System.out.println("Duração do loop: " + Duration() + " ms");
+	}
 	return move;
     }
 
@@ -675,7 +683,9 @@ public class MyTronBot {
 	    lastTime = Instant.now();
 	    //	    lastTime = DateTime.Now;
 	    Map.MakeMove(MakeMove());
-	    System.out.println("Duração do loop: " + Duration() + " ms");
+	    if (Parametros.TRACE_IA) {
+		System.out.println("Duração do loop: " + Duration() + " ms");
+	    }
 	}
     }
 
@@ -702,6 +712,8 @@ public class MyTronBot {
 	    }
 	    str.append(" X:" + x + "\r\n");
 	}
-	System.out.println(str.toString());
+	if (Parametros.TRACE_IA) {
+	    System.out.println(str.toString());
+	}
     }
 }
