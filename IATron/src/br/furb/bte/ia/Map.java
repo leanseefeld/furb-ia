@@ -275,14 +275,17 @@ class Map {
     public static String wallsToString() {
 	StringBuilder str = new StringBuilder();
 	str.append("IA Map: (1=IA, 2=player)\r\n");
-	for (int x = 0; x < walls.length; x++) {
-	    for (int y = 0; y < walls[x].length; y++) {
+
+	boolean[][] matrizInversa = Map.getWallsInversa();
+
+	for (int x = 0; x < matrizInversa.length; x++) {
+	    for (int y = 0; y < matrizInversa[x].length; y++) {
 
 		if (myLocation.X == x && myLocation.Y == y) {
 		    str.append('1');
 		} else if (opponentLocation.X == x && opponentLocation.Y == y) {
 		    str.append('2');
-		} else if (walls[x][y])
+		} else if (matrizInversa[x][y])
 		    str.append('#');
 		else
 		    str.append(' ');
@@ -291,6 +294,17 @@ class Map {
 	    str.append(" X:" + x + "\r\n");
 	}
 	return str.toString();
+    }
+
+    private static boolean[][] getWallsInversa() {
+	boolean[][] wallsInversa = new boolean[walls[0].length][walls.length];
+
+	for (int x = 0; x < walls.length; x++) {
+	    for (int y = 0; y < walls[x].length; y++) {
+		wallsInversa[y][x] = walls[x][y];
+	    }
+	}
+	return wallsInversa;
     }
 
     public static boolean isValid(Point ponto) {

@@ -12,7 +12,7 @@ public class MyTronBot {
     private static final int TIME_LIMIT = 1000;
     private static final int TIME_THRESHOLD = 150;
     private static final int MAX_MAP_SIZE = 2500;
-    private static final int MAX_DEPTH = 12;
+    private static final int MAX_DEPTH = 2;
 
     private static Instant lastTime;
 
@@ -319,24 +319,26 @@ public class MyTronBot {
 
 	List<Direction> ties = new ArrayList<Direction>();
 
-	for (int i = 0; i < Direction.values().length; i++) {
+	System.out.println(Map.wallsToString());
+	
+	for (Direction direction : Direction.values()) {
 	    p.X = Map.MyX();
 	    p.Y = Map.MyY();
-	    p.moveInDirection(Direction.values()[i]);
+	    p.moveInDirection(direction);
 	    if (!Map.IsWall(p.X, p.Y)) {
 		//score = FloodFill(gs.ApplyMoveToMeAndCreate(Map.MOVES[i]), p.X, p.Y);
-		score = FloodFillDepthFirst(gs.ApplyMoveToMeAndCreate(Direction.values()[i]));
+		score = FloodFillDepthFirst(gs.ApplyMoveToMeAndCreate(direction));
 	    } else {
 		score = 0;
 	    }
 	    //Console.Error.WriteLine("Far:" + Map.MOVES[i] + ":" + score);
 	    if (score > bestScore) {
-		bestMove = Direction.values()[i];
+		bestMove = direction;
 		bestScore = score;
 		ties.clear();
 		ties.add(bestMove);
 	    } else if (score == bestScore) {
-		ties.add(Direction.values()[i]);
+		ties.add(direction);
 	    }
 	}
 
@@ -354,7 +356,8 @@ public class MyTronBot {
 		for (Direction direction : Direction.values()) {
 		    Point q = new Point(p.X, p.Y);
 		    q.moveInDirection(direction);
-		    if (q.X == Map.MyX() && q.Y == Map.MyY()) {
+		    if (q.isSamePosition(Map.MyX(), Map.MyY())) {
+			//		    if (q.X == Map.MyX() && q.Y == Map.MyY()) {
 			continue;
 		    }
 		    q.X = p.X;
