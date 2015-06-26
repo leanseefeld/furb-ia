@@ -45,13 +45,13 @@ public class Point {
 		++Y;
 		break;
 	    case West://oeste
-		++X;
-//		--X; - Gustavo Sabel - 25/06/2015 - Alterando isso funciona
+//		++X;
+		--X; // Gustavo Sabel - 25/06/2015 - Alterando isso funciona
 		break;
 	    case East://leste
-		--X;
-//		++X; - Gustavo Sabel - 25/06/2015 - Alterando isso funciona
-		break;
+//		--X;
+		++X; // Gustavo Sabel - 25/06/2015 - Alterando isso funciona
+//		break;
 	}
     }
 
