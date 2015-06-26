@@ -20,4 +20,19 @@ public enum Direction {
 	}
 	return null;
     }
+
+    public String getNameInPT() {
+	switch (this) {
+	    case East:
+		return "Leste";
+	    case North:
+		return "Norte";
+	    case South:
+		return "Sul";
+	    case West:
+		return "Oeste";
+	    default:
+		return "Outro Lado";
+	}
+    }
 }

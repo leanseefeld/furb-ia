@@ -653,7 +653,7 @@ public class MyTronBot {
 	return bestMove;
     }
 
-    private static String MakeMove() {
+    private static Direction MakeMove() {
 	Direction move = null;
 	Instant inst = Instant.now();
 	Path path = PerformChaseMove();
@@ -669,7 +669,7 @@ public class MyTronBot {
 	    move = PerformSurvivalMove();
 	}
 
-	return move.name();
+	return move;
     }
 
     private static long Duration() {
@@ -679,10 +679,10 @@ public class MyTronBot {
 	//	return ts.Milliseconds;
     }
 
-    public static String processMove(int[][] mapa) {
+    public static Direction processMove(int[][] mapa) {
 	Map.Initialize(mapa);
 	lastTime = Instant.now();
-	String move = MakeMove();
+	Direction move = MakeMove();
 	System.out.println("Duração do loop: " + Duration() + " ms");
 	return move;
     }

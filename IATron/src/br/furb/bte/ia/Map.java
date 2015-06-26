@@ -90,35 +90,22 @@ class Map {
 	return (int) opponentLocation.Y;
     }
 
-    // Transmit a move to the game engine. 'direction' can be any sort of
-    // string that indicates a direction. For example, "north", "North",
-    // "n", "N".
-    public static void MakeMove(String direction) {
-	if (direction.length() <= 0) {
-	    System.out.println("FATAL ERROR: empty direction string. You " + "must specify a valid direction in which "
-		    + "to move.");
-	    System.exit(1);
-	    //            Environment.Exit(1);
-	}
-	//        String temp = direction.Substring(0, 1).ToUpper();
-	//        int firstChar = (int)temp[0];
-	char firstChar = direction.toUpperCase().charAt(0);
-	switch (firstChar) {
-	    case 'N':
+    public static void MakeMove(Direction direction) {
+	switch (direction) {
+	    case North:
 		MakeMove(1);
 		break;
-	    case 'E':
+	    case East:
 		MakeMove(2);
 		break;
-	    case 'S':
+	    case South:
 		MakeMove(3);
 		break;
-	    case 'W':
+	    case West:
 		MakeMove(4);
 		break;
 	    default:
-		System.out.println("FATAL ERROR: invalid move string. The string must "
-			+ "begin with one of the characters 'N', 'E', 'S', or " + "'W' (not case sensitive).");
+		System.out.println("Erro: nenhum movimento definido");
 		System.exit(1);
 	}
     }
