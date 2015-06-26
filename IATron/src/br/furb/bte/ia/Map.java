@@ -276,16 +276,17 @@ class Map {
 	StringBuilder str = new StringBuilder();
 	str.append("IA Map: (1=IA, 2=player)\r\n");
 
-	boolean[][] matrizInversa = Map.getWallsInversa();
+//	boolean[][] matrizInversa = Map.getWallsInversa();
+	boolean[][] matriz = Map.walls;
 
-	for (int x = 0; x < matrizInversa.length; x++) {
-	    for (int y = 0; y < matrizInversa[x].length; y++) {
+	for (int x = 0; x < matriz.length; x++) {
+	    for (int y = 0; y < matriz[x].length; y++) {
 
 		if (myLocation.X == x && myLocation.Y == y) {
 		    str.append('1');
 		} else if (opponentLocation.X == x && opponentLocation.Y == y) {
 		    str.append('2');
-		} else if (matrizInversa[x][y])
+		} else if (matriz[x][y])
 		    str.append('#');
 		else
 		    str.append(' ');

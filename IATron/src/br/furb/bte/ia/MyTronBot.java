@@ -12,7 +12,7 @@ public class MyTronBot {
     private static final int TIME_LIMIT = 1000;
     private static final int TIME_THRESHOLD = 150;
     private static final int MAX_MAP_SIZE = 2500;
-    private static final int MAX_DEPTH = 2;
+    private static final int MAX_DEPTH = 12;
 
     private static Instant lastTime;
 
@@ -78,7 +78,7 @@ public class MyTronBot {
 	room.DetermineTerritories();
 	int size = room.GetMySize() - room.GetOpponentSize();
 	//	System.out.println("IA:" + room.GetMySize() + " OP:" + room.GetOpponentSize());
-	System.out.println(room.toString());
+	//	System.out.println(room.toString());
 
 	return (float) size;
     }
@@ -106,22 +106,13 @@ public class MyTronBot {
 	    }
 
 	    float alphaAux = -AlphaBeta(newState, depth - 1, -beta, -alpha, !isMax);
-	    System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " Direction:" + newDirection
-		    + " alpha:" + alphaAux);
+//	    System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " Direction:" + newDirection
+//		    + " alpha:" + alphaAux);
 	    alpha = Math.max(alpha, alphaAux);
 	    if (beta <= alpha) {
 		break;
 	    }
 	}
-
-	//	Point locationPlayerOrigem;
-	//	if (isMax)
-	//	    locationPlayerOrigem = gs.getOpponent();
-	//	else
-	//	    locationPlayerOrigem = gs.getMe();
-	//
-	//	System.out.println("Depth: " + depth + " " + (isMax ? "MAX" : "MIN") + " alpha:" + alpha + " Best Direction:"
-	//		+ locationPlayerOrigem.getDirecaoString());
 	return alpha;
     }
 
@@ -244,7 +235,7 @@ public class MyTronBot {
 		float tmp;
 		int bestIndex = 0;
 		for (int i = 1; i < toVisit.size(); i++) {
-		    tmp = GetEuclideanOpponentDistance(toVisit.get(0).MyX(), toVisit.get(0).MyY());
+		    tmp = GetEuclideanOpponentDistance(toVisit.get(i).MyX(), toVisit.get(i).MyY());
 		    if (tmp < best) {
 			bestIndex = i;
 			best = tmp;
@@ -319,8 +310,8 @@ public class MyTronBot {
 
 	List<Direction> ties = new ArrayList<Direction>();
 
-	System.out.println(Map.wallsToString());
-	
+//	System.out.println(Map.wallsToString());
+
 	for (Direction direction : Direction.values()) {
 	    p.X = Map.MyX();
 	    p.Y = Map.MyY();
@@ -535,11 +526,6 @@ public class MyTronBot {
 		length -= 1;
 	    }
 
-	    System.out.println("Melhores Scores");
-	    for (int i = 0; i < scores.length; i++) {
-		System.out.println(" Score: " + scores[i] + "\t " + moves[i]);
-	    }
-
 	    for (int i = 0; i < moves.length; i++) {
 		Direction move = moves[i];
 		p.X = Map.MyX();
@@ -556,8 +542,8 @@ public class MyTronBot {
 		    long duration = java.time.Duration.between(instI, instF).toMillis();
 		    time = duration * (depth * timebase);
 
-		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration + " BestScore:" + score
-			    + " Direction:" + move.name());
+//		    System.out.println("AlphaBeta: Depth:" + depth + " Duration:" + duration + " BestScore:" + score
+//			    + " Direction:" + move.name());
 		} else {
 		    score = Integer.MIN_VALUE;
 		}
@@ -571,9 +557,6 @@ public class MyTronBot {
 		    ties.add(move);
 		}
 
-		// track score
-		//                String temp = move.Substring(0, 1).ToUpper();
-		//                int firstChar = (int)temp[0];
 		switch (move) {
 		    case North:
 			scores[0] = score;
@@ -589,14 +572,9 @@ public class MyTronBot {
 			break;
 		}
 	    }
-	    System.out.println("Fim Depth: " + depth + " " + (false ? "MAX" : "MIN") + " alpha:" + score);
+//	    System.out.println("Fim Depth: " + depth + " " + (false ? "MAX" : "MIN") + " alpha:" + score);
 
 	    depth++;
-	}
-
-	System.out.println("Melhores direcoes");
-	for (int i = 0; i < ties.size(); i++) {
-	    System.out.println(" * " + ties.get(i));
 	}
 
 	List<Direction> secondaryTies = new ArrayList<Direction>();
@@ -666,9 +644,10 @@ public class MyTronBot {
 
 	//Significa que seu inimigo é alcançável
 	if (path != null) {
-	    //	    move = path.direction;
+	    System.out.println("PerformNearMove(path)");
 	    move = PerformNearMove(path);
 	} else if (path == null) {
+	    System.out.println("PerformSurvivalMove()");
 	    move = PerformSurvivalMove();
 	}
 
