@@ -313,7 +313,7 @@ class Map {
 	/*    */ponto.X >= 0 && //
 		ponto.X < Map.width && //
 		ponto.Y >= 0 && //
-		ponto.X < Map.height;
+		ponto.Y < Map.height;
     }
 
 }
